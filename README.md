@@ -12,6 +12,8 @@ grandet \
 ```
 
 ```golang
+package assets
+
 func init() {
 	// regist all local assets
 	(&grandetAssets{}).registAssets()
@@ -21,7 +23,8 @@ func init() {
 ```golang
 import "github.com/setekhid/grandet/assets"
 
-content := assets.Grandet.Asset(
-	"github.com/setekhid/grandet/assets/asset.go.tmpl")
-_ = content
+func TasteAssets() {
+	content := assets.Grandet.Asset("asset.go.tmpl")
+	_ = content
+}
 ```
