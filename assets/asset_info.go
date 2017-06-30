@@ -8,6 +8,7 @@ import (
 	"text/template"
 )
 
+// AssetInfo presents an asset file information
 type AssetInfo struct {
 	tmpl *template.Template
 
@@ -30,6 +31,7 @@ func NewAssetInfo() *AssetInfo {
 	}
 }
 
+// BytesAsset contains the content of package asset
 type BytesAsset []byte
 
 // Stringer#String
@@ -52,6 +54,7 @@ func (as *AssetInfo) String() string {
 	return buff.String()
 }
 
+// AssetsInfo presents the package assets information
 type AssetsInfo struct {
 	tmpl *template.Template
 
