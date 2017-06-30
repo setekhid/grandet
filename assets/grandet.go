@@ -16,7 +16,7 @@ type grandetsAssets struct {
 
 func (ga *grandetsAssets) registAssets() {
 
-	ga.GrandetAssets.Init()
+	ga.GrandetAssets.Init("github.com/setekhid/grandet/assets")
 
 	// call asset registers
 
