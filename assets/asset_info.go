@@ -13,6 +13,7 @@ type AssetInfo struct {
 	tmpl *template.Template
 
 	AssetPackage  string
+	PackageImport string
 	AssetName     string
 	AssetContent  BytesAsset
 	AssetRegister string
@@ -58,6 +59,7 @@ type AssetsInfo struct {
 	tmpl *template.Template
 
 	AssetPackage   string
+	PackageImport  string
 	AssetRegisters []string
 }
 
@@ -70,6 +72,7 @@ func NewAssetsInfo(infos []*AssetInfo) (*AssetsInfo, error) {
 	tmpl = template.Must(tmpl.Parse(string(tmpl_str)))
 
 	pkg_name := ""
+	pkg_import := ""
 	registers := []string{}
 	for _, info := range infos {
 
@@ -79,12 +82,19 @@ func NewAssetsInfo(infos []*AssetInfo) (*AssetsInfo, error) {
 			return nil, errors.New("assets are not in the same package")
 		}
 
+		if len(pkg_import) <= 0 {
+			pkg_import = info.PackageImport
+		} else if pkg_import != info.PackageImport {
+			return nil, errors.New("assets are not in the same import name")
+		}
+
 		registers = append(registers, info.AssetRegister)
 	}
 
 	return &AssetsInfo{
 		tmpl:           tmpl,
 		AssetPackage:   pkg_name,
+		PackageImport:  pkg_import,
 		AssetRegisters: registers,
 	}, nil
 }

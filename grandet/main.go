@@ -59,6 +59,7 @@ func main() {
 		info.AssetName = file
 		info.AssetContent = asset
 		info.AssetPackage = pkg_name
+		info.PackageImport = pkg_import
 		info.AssetRegister = "registAsset" + strconv.Itoa(ind)
 
 		infos = append(infos, info)
