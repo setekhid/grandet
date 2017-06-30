@@ -26,18 +26,15 @@ type Grandet interface {
 type GrandetAssets struct {
 	zipped map[string][]byte
 	raw    map[string][]byte
-
-	pkg_import string
 }
 
 // Init initialize GrandetAssets
-func (ga *GrandetAssets) Init(pkg_import ...string) {
+func (ga *GrandetAssets) Init(args ...string) {
 	ga.zipped = map[string][]byte{}
 	ga.raw = map[string][]byte{}
 
-	if len(pkg_import) > 0 {
-		ga.pkg_import = pkg_import[0]
-		ga.barnRegist()
+	if len(args) > 0 {
+		ga.barnRegist(args[0])
 	}
 }
 

@@ -8,11 +8,41 @@ import (
 	"os"
 	"testing"
 
+	"github.com/setekhid/grandet"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
+func TestBytesAsset(t *testing.T) {
+
+	asset := BytesAsset([]byte{
+		1, 2, 3, 4, 5, 6, 77,
+	})
+	asset_str := asset.String()
+
+	assert.EqualValues(t, "1, 2, 3, 4, 5, 6, 77,", asset_str)
+
+	t.Log("hash:", asset.UniqueName())
+}
+
 func TestAssetsResult(t *testing.T) {
+
+	grandet_raw, err := ioutil.ReadFile("grandet.go.tmpl")
+	require.NoError(t, err)
+	asset_raw, err := ioutil.ReadFile("asset.go.tmpl")
+	require.NoError(t, err)
+
+	grandet_asset := grandet.Asset(
+		"github.com/setekhid/grandet/assets/grandet.go.tmpl")
+	asset_asset := grandet.Asset(
+		"github.com/setekhid/grandet/assets/asset.go.tmpl")
+
+	assert.EqualValues(t, grandet_raw, grandet_asset)
+	assert.EqualValues(t, asset_raw, asset_asset)
+}
+
+func TestBarnResult(t *testing.T) {
 
 	grandet_raw, err := ioutil.ReadFile("grandet.go.tmpl")
 	require.NoError(t, err)

@@ -4,7 +4,7 @@ import (
 	"path"
 )
 
-// Barn collects all Grandet assets
+// Barn collects all imported Grandet assets
 type Barn interface {
 	Grandet
 	Record(pkg_import string, assets Grandet)
@@ -88,4 +88,6 @@ func Foldl(
 	return barn.Foldl(value, process)
 }
 
-func (ga *GrandetAssets) barnRegist() { barn.Record(ga.pkg_import, ga) }
+func (ga *GrandetAssets) barnRegist(pkg_import string) {
+	barn.Record(pkg_import, ga)
+}

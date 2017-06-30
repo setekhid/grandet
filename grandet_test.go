@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func genGrandet(t *testing.T) Grandet {
+func genGrandet(t *testing.T) *GrandetAssets {
 
 	raw_content := []byte("I'm an asset!")
 
@@ -29,10 +29,7 @@ func genGrandet(t *testing.T) Grandet {
 	ga := new(GrandetAssets)
 	ga.Init()
 
-	ga.RegistAsset(
-		"github.com/setekhid/grandet/test.txt",
-		zipped_content,
-	)
+	ga.RegistAsset("test.txt", zipped_content)
 
 	return ga
 }
@@ -41,7 +38,7 @@ func TestGrandetAsset(t *testing.T) {
 
 	ga := genGrandet(t)
 
-	asset_content := ga.Asset("github.com/setekhid/grandet/test.txt")
+	asset_content := ga.Asset("test.txt")
 
 	require.EqualValues(t, []byte("I'm an asset!"), asset_content)
 }
