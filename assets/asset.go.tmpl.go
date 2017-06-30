@@ -5,7 +5,7 @@ package assets
 
 import ()
 
-func (ga *grandetsAssets) registAsset0() {
+func (ga *grandetsAssets) registAsset8331f6c186d39cfffbaad6a303cd4b2a() {
 
 	ga.RegistAsset(
 

@@ -2,7 +2,10 @@ package assets
 
 import (
 	"bytes"
+	"crypto/md5"
 	"errors"
+	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
@@ -33,6 +36,16 @@ func NewAssetInfo() *AssetInfo {
 
 // BytesAsset contains the content of package asset
 type BytesAsset []byte
+
+// UniqueName calculate a unique name for the content
+func (ba BytesAsset) UniqueName() string {
+	h := md5.New()
+	_, err := bytes.NewBuffer(ba).WriteTo(h)
+	if err != nil {
+		panic(err)
+	}
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
 
 // Stringer#String
 func (ba BytesAsset) String() string {
@@ -90,6 +103,8 @@ func NewAssetsInfo(infos []*AssetInfo) (*AssetsInfo, error) {
 
 		registers = append(registers, info.AssetRegister)
 	}
+
+	sort.Strings(registers)
 
 	return &AssetsInfo{
 		tmpl:           tmpl,

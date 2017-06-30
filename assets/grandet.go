@@ -20,9 +20,9 @@ func (ga *grandetsAssets) registAssets() {
 
 	// call asset registers
 
-	ga.registAsset0()
+	ga.registAsset527e6588aa0d3145c61ebe30c995dbe3()
 
-	ga.registAsset1()
+	ga.registAsset8331f6c186d39cfffbaad6a303cd4b2a()
 
 	Grandet = ga
 }

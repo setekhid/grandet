@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 
 	"github.com/setekhid/grandet/assets"
 )
@@ -48,7 +47,7 @@ func main() {
 
 	// range files
 	infos := []*assets.AssetInfo{}
-	for ind, file := range pkg_files {
+	for _, file := range pkg_files {
 
 		asset, err := ReadAsset(filepath.Join(pkg_dir, file))
 		if err != nil {
@@ -60,7 +59,7 @@ func main() {
 		info.AssetContent = asset
 		info.AssetPackage = pkg_name
 		info.PackageImport = pkg_import
-		info.AssetRegister = "registAsset" + strconv.Itoa(ind)
+		info.AssetRegister = "registAsset" + asset.UniqueName()
 
 		infos = append(infos, info)
 
