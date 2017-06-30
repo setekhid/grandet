@@ -8,15 +8,15 @@ import (
 )
 
 // Grandet represents the package assets
-var Grandet gr.Grandet
+var Grandet gr.Assets
 
 type grandetsAssets struct {
-	gr.GrandetAssets
+	gr.AssetsImpl
 }
 
 func (ga *grandetsAssets) registAssets() {
 
-	ga.GrandetAssets.Init("{{.PackageImport}}")
+	ga.AssetsImpl.Init("{{.PackageImport}}")
 
 	// call asset registers
 {{range $_, $AssetRegister := .AssetRegisters}}

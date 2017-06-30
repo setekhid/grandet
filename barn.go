@@ -6,19 +6,19 @@ import (
 
 // Barn collects all imported Grandet assets
 type Barn interface {
-	Grandet
-	Record(pkg_import string, assets Grandet)
+	Assets
+	Record(pkg_import string, assets Assets)
 }
 
 type barnImpl struct {
-	grandets map[string]Grandet
+	grandets map[string]Assets
 }
 
 func newBarnImpl() *barnImpl {
-	return &barnImpl{grandets: map[string]Grandet{}}
+	return &barnImpl{grandets: map[string]Assets{}}
 }
 
-// Grandet#Asset
+// Assets#Asset
 func (b *barnImpl) Asset(name string) []byte {
 
 	name = path.Clean(name)
@@ -32,7 +32,7 @@ func (b *barnImpl) Asset(name string) []byte {
 	return nil
 }
 
-// Grandet#Foldl
+// Assets#Foldl
 func (b *barnImpl) Foldl(
 
 	value interface{},
@@ -62,7 +62,7 @@ func (b *barnImpl) Foldl(
 }
 
 // Barn#Record
-func (b *barnImpl) Record(pkg_import string, assets Grandet) {
+func (b *barnImpl) Record(pkg_import string, assets Assets) {
 
 	pkg_import = path.Clean(pkg_import)
 
@@ -88,6 +88,6 @@ func Foldl(
 	return barn.Foldl(value, process)
 }
 
-func (ga *GrandetAssets) barnRegist(pkg_import string) {
+func (ga *AssetsImpl) barnRegist(pkg_import string) {
 	barn.Record(pkg_import, ga)
 }

@@ -27,9 +27,9 @@ func TestBarn(t *testing.T) {
 			require := value.([]byte)
 			if "github.com/setekhid/grandet/test.txt" == name {
 				return true
-			} else {
-				return require
 			}
+
+			return require
 		},
 	)
 

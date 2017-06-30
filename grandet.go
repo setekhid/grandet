@@ -6,14 +6,14 @@ import (
 	"io/ioutil"
 )
 
-// Grandet is the interface for directly asset accessing, the return value may
+// Assets is the interface for directly asset accessing, the return value may
 // not be your original content.
-type Grandet interface {
+type Assets interface {
 
 	// Asset get an asset by name, if doesn't exists, return nil
 	Asset(name string) (content []byte)
 
-	// Foldl fold all assets in this Grandet with value
+	// Foldl fold all assets in this Assets with value
 	Foldl(
 		value interface{},
 		process func(
@@ -22,14 +22,14 @@ type Grandet interface {
 	) (result interface{})
 }
 
-// GrandetAssets provide the implementation of Grandet
-type GrandetAssets struct {
+// AssetsImpl provide the implementation of Assets
+type AssetsImpl struct {
 	zipped map[string][]byte
 	raw    map[string][]byte
 }
 
-// Init initialize GrandetAssets
-func (ga *GrandetAssets) Init(args ...string) {
+// Init initialize AssetsImpl
+func (ga *AssetsImpl) Init(args ...string) {
 	ga.zipped = map[string][]byte{}
 	ga.raw = map[string][]byte{}
 
@@ -38,7 +38,7 @@ func (ga *GrandetAssets) Init(args ...string) {
 	}
 }
 
-func (ga *GrandetAssets) unzipped(zipped []byte) []byte {
+func (ga *AssetsImpl) unzipped(zipped []byte) []byte {
 
 	reader := bytes.NewBuffer(zipped)
 	decoder, err := gzip.NewReader(reader)
@@ -55,8 +55,8 @@ func (ga *GrandetAssets) unzipped(zipped []byte) []byte {
 	return unzipped
 }
 
-// Grandet#Asset
-func (ga *GrandetAssets) Asset(name string) []byte {
+// Asset implement Assets#Asset
+func (ga *AssetsImpl) Asset(name string) []byte {
 
 	if asset, ok := ga.raw[name]; ok {
 		return asset
@@ -72,8 +72,8 @@ func (ga *GrandetAssets) Asset(name string) []byte {
 	return nil
 }
 
-// Grandet#Foldl
-func (ga *GrandetAssets) Foldl(
+// Foldl implement Assets#Foldl
+func (ga *AssetsImpl) Foldl(
 
 	value interface{},
 	process func(interface{}, string, []byte) interface{},
@@ -95,6 +95,6 @@ func (ga *GrandetAssets) Foldl(
 }
 
 // RegistAsset register an asset into grandet
-func (ga *GrandetAssets) RegistAsset(name string, content []byte) {
+func (ga *AssetsImpl) RegistAsset(name string, content []byte) {
 	ga.zipped[name] = content
 }

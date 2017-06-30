@@ -8,21 +8,21 @@ import (
 )
 
 // Grandet represents the package assets
-var Grandet gr.Grandet
+var Grandet gr.Assets
 
 type grandetsAssets struct {
-	gr.GrandetAssets
+	gr.AssetsImpl
 }
 
 func (ga *grandetsAssets) registAssets() {
 
-	ga.GrandetAssets.Init("github.com/setekhid/grandet/assets")
+	ga.AssetsImpl.Init("github.com/setekhid/grandet/assets")
 
 	// call asset registers
 
-	ga.registAsset527e6588aa0d3145c61ebe30c995dbe3()
-
 	ga.registAsset8331f6c186d39cfffbaad6a303cd4b2a()
+
+	ga.registAssetc2f91650bbcea617adcde31437d22d8d()
 
 	Grandet = ga
 }
