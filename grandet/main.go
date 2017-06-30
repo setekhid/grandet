@@ -1,14 +1,10 @@
 package main
 
 import (
-	"bytes"
-	"compress/gzip"
 	"flag"
 	"go/build"
-	"io"
-	"io/ioutil"
-	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/setekhid/grandet/assets"
 )
@@ -28,68 +24,70 @@ func main() {
 	// asset files
 	pkg_files := flag.Args()
 
+	// Abs pkg_dir
+	pkg_dir, err := filepath.Abs(pkg_dir)
+	if err != nil {
+		panic(err)
+	}
+
 	// check pkg_name & pkg_import
 	if len(pkg_name) <= 0 || len(pkg_import) <= 0 {
 
-		var err error
-		build_name, build_import, err := PkgName(pkg_dir)
+		read_name, read_import, err := PkgNames(pkg_dir)
 		if err != nil {
 			panic(err)
 		}
 
 		if len(pkg_name) <= 0 {
-			pkg_name = build_name
+			pkg_name = read_name
 		}
 		if len(pkg_import) <= 0 {
-			pkg_import = build_import
+			pkg_import = read_import
 		}
 	}
 
-	// range files
-	infos := []*assets.AssetInfo{}
-	for _, file := range pkg_files {
+	// generate AssetPackage
+	asset_pkg := assets.NewAssetPackage(pkg_name, pkg_import)
 
-		asset, err := ReadAsset(filepath.Join(pkg_dir, file))
+	// range files to generate asset informations
+	asset_infos := map[string]*assets.AssetInfo{}
+	for _, file_name := range pkg_files {
+
+		file_name, err := filepath.Abs(file_name)
+		if err != nil {
+			panic(err)
+		}
+		if !strings.HasPrefix(file_name, pkg_dir) {
+			panic("shit, your asset file doesn't belong to the package")
+		}
+
+		asset_info, err := assets.ReadAssetInfo(file_name)
 		if err != nil {
 			panic(err)
 		}
 
-		info := assets.NewAssetInfo()
-		info.AssetName = file
-		info.AssetContent = asset
-		info.AssetPackage = pkg_name
-		info.PackageImport = pkg_import
-		info.AssetRegister = "registAsset" + asset.UniqueName()
+		// collect
+		asset_pkg.Collect(asset_info)
+		asset_infos[file_name] = asset_info
+	}
 
-		infos = append(infos, info)
-
-		// write down
-		err = ioutil.WriteFile(
-			filepath.Join(pkg_dir, file+".go"),
-			[]byte(info.String()),
-			os.ModePerm,
-		)
+	// write down asset golang files
+	for file_name, asset_info := range asset_infos {
+		err := asset_info.WriteFile(file_name + ".go")
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	all, err := assets.NewAssetsInfo(infos)
-	if err != nil {
-		panic(err)
-	}
-
-	err = ioutil.WriteFile(
-		filepath.Join(pkg_dir, "grandet.go"),
-		[]byte(all.String()),
-		os.ModePerm,
-	)
+	// write down grandet.go
+	err = asset_pkg.WriteFile(filepath.Join(pkg_dir, "grandet.go"))
 	if err != nil {
 		panic(err)
 	}
 }
 
-func PkgName(pkg_dir string) (string, string, error) {
+// PkgNames parse package name and import name
+func PkgNames(pkg_dir string) (string, string, error) {
 
 	pkg, err := build.ImportDir(pkg_dir, 0)
 	if err != nil {
@@ -97,34 +95,4 @@ func PkgName(pkg_dir string) (string, string, error) {
 	}
 
 	return pkg.Name, pkg.ImportPath, err
-}
-
-func ReadAsset(file string) (assets.BytesAsset, error) {
-
-	buff := &bytes.Buffer{}
-
-	err := func() error {
-
-		reader, err := os.Open(file)
-		if err != nil {
-			return err
-		}
-		defer reader.Close()
-
-		writer := gzip.NewWriter(buff)
-		defer writer.Close()
-
-		_, err = io.Copy(writer, reader)
-		if err != nil {
-			return err
-		}
-		err = writer.Flush()
-		if err != nil {
-			return err
-		}
-
-		return nil
-	}()
-
-	return buff.Bytes(), err
 }

@@ -7,7 +7,8 @@ go get github.com/setekhid/grandet/grandet
 grandet \
 	-i github.com/setekhid/grandet/assets \
 	-d $GOPATH/src/github.com/setekhid/grandet/assets \
-	asset.go.tmpl grandet.go.tmpl
+	$GOPATH/src/github.com/setekhid/grandet/assets/asset.go.tmpl \
+	$GOPATH/src/github.com/setekhid/grandet/assets/grandet.go.tmpl
 # gofmt as you like
 ```
 
