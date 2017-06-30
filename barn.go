@@ -1,6 +1,8 @@
 package grandet
 
-import ()
+import (
+	"path"
+)
 
 // Barn collects all Grandet assets
 type Barn interface {
@@ -18,7 +20,15 @@ func newBarnImpl() *barnImpl {
 
 // Grandet#Asset
 func (b *barnImpl) Asset(name string) []byte {
-	// TODO
+
+	name = path.Clean(name)
+	pkg_import := path.Dir(name)
+	asset_name := path.Base(name)
+
+	if ga, ok := b.grandets[pkg_import]; ok {
+		return ga.Asset(asset_name)
+	}
+
 	return nil
 }
 
@@ -29,13 +39,38 @@ func (b *barnImpl) Foldl(
 	process func(interface{}, string, []byte) interface{},
 
 ) interface{} {
-	// TODO
-	return nil
+
+	result := value
+
+	for pkg_import, pkg_grandet := range b.grandets {
+
+		result = pkg_grandet.Foldl(
+
+			result,
+
+			func(value interface{}, name string, content []byte) interface{} {
+				return process(
+					value,
+					path.Join(pkg_import, name),
+					content,
+				)
+			},
+		)
+	}
+
+	return result
 }
 
 // Barn#Record
 func (b *barnImpl) Record(pkg_import string, assets Grandet) {
-	// TODO
+
+	pkg_import = path.Clean(pkg_import)
+
+	if _, ok := b.grandets[pkg_import]; ok {
+		panic("duplicated package assets recording " + pkg_import)
+	}
+
+	b.grandets[pkg_import] = assets
 }
 
 var barn Barn = newBarnImpl()
