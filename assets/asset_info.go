@@ -21,8 +21,7 @@ type AssetInfo struct {
 // NewAssetInfo construct an AssetInfo, with empty informations
 func NewAssetInfo() *AssetInfo {
 
-	tmpl_str := Grandet.Asset(
-		"github.com/setekhid/grandet/assets/asset.go.tmpl")
+	tmpl_str := Grandet.Asset("asset.go.tmpl")
 	tmpl := template.New("asset.go.tmpl")
 	tmpl = template.Must(tmpl.Parse(string(tmpl_str)))
 
@@ -66,8 +65,7 @@ type AssetsInfo struct {
 // in the same package, an error occured
 func NewAssetsInfo(infos []*AssetInfo) (*AssetsInfo, error) {
 
-	tmpl_str := Grandet.Asset(
-		"github.com/setekhid/grandet/assets/grandet.go.tmpl")
+	tmpl_str := Grandet.Asset("grandet.go.tmpl")
 	tmpl := template.New("grandet.go.tmpl")
 	tmpl = template.Must(tmpl.Parse(string(tmpl_str)))
 

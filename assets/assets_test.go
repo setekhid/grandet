@@ -19,10 +19,8 @@ func TestAssetsResult(t *testing.T) {
 	asset_raw, err := ioutil.ReadFile("asset.go.tmpl")
 	require.NoError(t, err)
 
-	grandet_asset := Grandet.Asset(
-		"github.com/setekhid/grandet/assets/grandet.go.tmpl")
-	asset_asset := Grandet.Asset(
-		"github.com/setekhid/grandet/assets/asset.go.tmpl")
+	grandet_asset := Grandet.Asset("grandet.go.tmpl")
+	asset_asset := Grandet.Asset("asset.go.tmpl")
 
 	assert.EqualValues(t, grandet_raw, grandet_asset)
 	assert.EqualValues(t, asset_raw, asset_asset)

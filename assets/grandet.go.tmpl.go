@@ -10,7 +10,7 @@ func (ga *grandetsAssets) registAsset1() {
 	ga.RegistAsset(
 
 		// asset name
-		"github.com/setekhid/grandet/assets/grandet.go.tmpl",
+		"grandet.go.tmpl",
 
 		[]byte{
 			// asset content

@@ -8,7 +8,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"strconv"
 
@@ -57,7 +56,7 @@ func main() {
 		}
 
 		info := assets.NewAssetInfo()
-		info.AssetName = path.Join(pkg_import, file)
+		info.AssetName = file
 		info.AssetContent = asset
 		info.AssetPackage = pkg_name
 		info.AssetRegister = "registAsset" + strconv.Itoa(ind)
