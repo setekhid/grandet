@@ -75,6 +75,9 @@ func (b *barnImpl) Record(pkg_import string, assets Assets) {
 
 var barn Barn = newBarnImpl()
 
+// GetBarn return the barn instance for read-only check
+func GetBarn() Assets { return barn }
+
 // Asset return an asset from Barn
 func Asset(name string) []byte { return barn.Asset(name) }
 
