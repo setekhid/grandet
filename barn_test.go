@@ -8,10 +8,9 @@ import (
 
 func TestBarn(t *testing.T) {
 
-	grandet := genGrandet(t)
-	grandet.barnRegist("github.com/setekhid/grandet")
+	genGrandet(t, "github.com/setekhid/grandet02")
 
-	asset_content := Asset("github.com/setekhid/grandet/test.txt")
+	asset_content := Asset("github.com/setekhid/grandet02/test.txt")
 	assert.EqualValues(t, []byte("I'm an asset!"), asset_content)
 
 	result := Foldl(
@@ -25,7 +24,7 @@ func TestBarn(t *testing.T) {
 			}
 
 			require := value.([]byte)
-			if "github.com/setekhid/grandet/test.txt" == name {
+			if "/github.com/setekhid/grandet02/test.txt" == name {
 				return true
 			}
 
@@ -34,4 +33,8 @@ func TestBarn(t *testing.T) {
 	)
 
 	assert.EqualValues(t, true, result)
+
+	assert.EqualValues(t, Branches("github.com"), []string{"/setekhid"})
+	t.Log(Branches("github.com/setekhid"))
+	assert.Contains(t, Branches("github.com/setekhid"), "/grandet02")
 }

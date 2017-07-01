@@ -22,7 +22,9 @@ package assets
 
 func init() {
 	// regist all local assets
-	(&grandetAssets{}).registAssets()
+	assets := &grandetAssets{}
+	assets.registAssets()
+	assets.BelongTo("github.com/setekhid/grandet")
 }
 ```
 

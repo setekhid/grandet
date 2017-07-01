@@ -25,20 +25,23 @@ type Assets interface {
 
 // AssetsImpl provide the implementation of Assets
 type AssetsImpl struct {
+	pkg_import string
+
 	zipped  map[string][]byte
 	raw     map[string][]byte
 	modtime map[string]time.Time
 }
 
 // Init initialize AssetsImpl
-func (ga *AssetsImpl) Init(args ...string) {
+func (ga *AssetsImpl) Init(pkg_import string) {
 	ga.zipped = map[string][]byte{}
 	ga.raw = map[string][]byte{}
 	ga.modtime = map[string]time.Time{}
 
-	if len(args) > 0 {
-		ga.barnRegist(args[0])
-	}
+	ga.pkg_import = pathFormatAndCheck(pkg_import)
+
+	ga.barnRegist()
+	ga.linkParent()
 }
 
 func (ga *AssetsImpl) unzipped(zipped []byte) []byte {
@@ -60,6 +63,8 @@ func (ga *AssetsImpl) unzipped(zipped []byte) []byte {
 
 // Asset implement Assets#Asset
 func (ga *AssetsImpl) Asset(name string) []byte {
+
+	name = pathFormatAndCheck(name)
 
 	if asset, ok := ga.raw[name]; ok {
 		return asset
@@ -101,6 +106,9 @@ func (ga *AssetsImpl) Foldl(
 func (ga *AssetsImpl) RegistAsset(
 	name string, content []byte, modtime time.Time,
 ) {
+
+	name = pathFormatAndCheck(name)
+
 	ga.zipped[name] = content
 	ga.modtime[name] = modtime
 }

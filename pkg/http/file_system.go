@@ -8,16 +8,14 @@ import (
 )
 
 // BarnFS return the instance of http#FileSystem
-func BarnFS() http.FileSystem { return barnFileSystem{grandet.GetBarn()} }
+func BarnFS() http.FileSystem { return barnFileSystem{} }
 
-type barnFileSystem struct {
-	grandet.Assets
-}
+type barnFileSystem struct{}
 
 // Open implement Filesystem#Open
 func (fs barnFileSystem) Open(name string) (http.File, error) {
 
-	content := fs.Asset(name)
+	content := grandet.Asset(name)
 	if content == nil {
 		return nil, os.ErrNotExist
 	}

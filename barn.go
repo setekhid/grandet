@@ -2,26 +2,32 @@ package grandet
 
 import (
 	"path"
+	"sort"
+	"strings"
 )
 
 // Barn collects all imported Grandet assets
 type Barn interface {
 	Assets
-	Record(pkg_import string, assets Assets)
+	Branches(pkg_import string) []string
 }
 
 type barnImpl struct {
 	grandets map[string]Assets
+	branches map[string][]string
 }
 
 func newBarnImpl() *barnImpl {
-	return &barnImpl{grandets: map[string]Assets{}}
+	return &barnImpl{
+		grandets: map[string]Assets{},
+		branches: map[string][]string{},
+	}
 }
 
 // Assets#Asset
 func (b *barnImpl) Asset(name string) []byte {
 
-	name = path.Clean(name)
+	name = pathFormatAndCheck(name)
 	pkg_import := path.Dir(name)
 	asset_name := path.Base(name)
 
@@ -61,8 +67,31 @@ func (b *barnImpl) Foldl(
 	return result
 }
 
-// Barn#Record
-func (b *barnImpl) Record(pkg_import string, assets Assets) {
+// Barn#Branches
+func (b *barnImpl) Branches(pkg_import string) []string {
+
+	pkg_import = pathFormatAndCheck(pkg_import)
+
+	branches := b.branches[pkg_import]
+	copied := make([]string, len(branches))
+	copy(copied, branches)
+	return copied
+}
+
+var (
+	barn *barnImpl = newBarnImpl() // singleton instance
+
+	// Asset return an asset from the Barn instance
+	Asset = barn.Asset
+	// Foldl loop all assets in Barn
+	Foldl = barn.Foldl
+	// Branches return the branch names of specific path
+	Branches = barn.Branches
+)
+
+func (ga *AssetsImpl) barnRegist() { barn.record(ga.pkg_import, ga) }
+
+func (b *barnImpl) record(pkg_import string, assets Assets) {
 
 	pkg_import = path.Clean(pkg_import)
 
@@ -73,24 +102,48 @@ func (b *barnImpl) Record(pkg_import string, assets Assets) {
 	b.grandets[pkg_import] = assets
 }
 
-var barn Barn = newBarnImpl()
+func (ga *AssetsImpl) linkParent() {
 
-// GetBarn return the barn instance for read-only check
-func GetBarn() Assets { return barn }
+	pkg_import := ga.pkg_import
+	parent_dir := path.Dir(ga.pkg_import)
+	for pkg_import != "/" {
 
-// Asset return an asset from Barn
-func Asset(name string) []byte { return barn.Asset(name) }
-
-// Foldl loop all assets in Barn
-func Foldl(
-
-	value interface{},
-	process func(interface{}, string, []byte) interface{},
-
-) interface{} {
-	return barn.Foldl(value, process)
+		barn.link(pkg_import, parent_dir)
+		pkg_import = parent_dir
+		parent_dir = path.Dir(pkg_import)
+	}
 }
 
-func (ga *AssetsImpl) barnRegist(pkg_import string) {
-	barn.Record(pkg_import, ga)
+func (b *barnImpl) link(pkg_import string, parent_import string) {
+
+	pkg_import = path.Clean(pkg_import)
+	parent_import = path.Clean(parent_import)
+
+	parent_dir := parent_import + "/"
+	if parent_import == "/" {
+		parent_dir = parent_import
+	}
+
+	if !strings.HasPrefix(pkg_import, parent_dir) {
+		panic(pkg_import + " is not belong to the " + parent_import)
+	}
+
+	relative_import := pkg_import[len(parent_dir)-1:]
+
+	branches := b.branches[parent_import]
+
+	if !sort.StringsAreSorted(branches) {
+		panic("internal error, barn branches doesn't sort")
+	}
+
+	ind := sort.SearchStrings(branches, relative_import)
+	if ind < len(branches) && branches[ind] == relative_import {
+		return
+	}
+
+	branches = append(branches, "")
+	copy(branches[ind+1:], branches[ind:])
+	branches[ind] = relative_import
+
+	b.branches[parent_import] = branches
 }
