@@ -21,6 +21,7 @@ type AssetInfo struct {
 
 	AssetName     string
 	AssetContent  BytesAsset
+	AssetModTime  int64
 	AssetRegister string
 }
 
@@ -29,6 +30,7 @@ func ReadAssetInfo(asset_file string) (*AssetInfo, error) {
 
 	asset_name := filepath.Base(asset_file)
 	asset_content := bytes.Buffer{}
+	asset_modtime := int64(0)
 
 	// zipping file content into asset_content
 	err := func() error {
@@ -42,6 +44,12 @@ func ReadAssetInfo(asset_file string) (*AssetInfo, error) {
 		}
 		defer file.Close()
 
+		fstat, err := file.Stat()
+		if err != nil {
+			return err
+		}
+		asset_modtime = fstat.ModTime().Unix()
+
 		_, err = io.Copy(zipper, file)
 		if err != nil {
 			return err
@@ -53,14 +61,15 @@ func ReadAssetInfo(asset_file string) (*AssetInfo, error) {
 		return nil, err
 	}
 
-	return NewAssetInfo(asset_name, asset_content.Bytes()), nil
+	return NewAssetInfo(asset_name, asset_content.Bytes(), asset_modtime), nil
 }
 
 // NewAssetInfo construct an AssetInfo, with empty informations
-func NewAssetInfo(name string, content []byte) *AssetInfo {
+func NewAssetInfo(name string, content []byte, modtime int64) *AssetInfo {
 	return &AssetInfo{
 		AssetName:     name,
 		AssetContent:  BytesAsset(content),
+		AssetModTime:  modtime,
 		AssetRegister: "registAsset" + BytesAsset(content).UniqueName(),
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"io/ioutil"
+	"time"
 )
 
 // Assets is the interface for directly asset accessing, the return value may
@@ -24,14 +25,16 @@ type Assets interface {
 
 // AssetsImpl provide the implementation of Assets
 type AssetsImpl struct {
-	zipped map[string][]byte
-	raw    map[string][]byte
+	zipped  map[string][]byte
+	raw     map[string][]byte
+	modtime map[string]time.Time
 }
 
 // Init initialize AssetsImpl
 func (ga *AssetsImpl) Init(args ...string) {
 	ga.zipped = map[string][]byte{}
 	ga.raw = map[string][]byte{}
+	ga.modtime = map[string]time.Time{}
 
 	if len(args) > 0 {
 		ga.barnRegist(args[0])
@@ -95,6 +98,9 @@ func (ga *AssetsImpl) Foldl(
 }
 
 // RegistAsset register an asset into grandet
-func (ga *AssetsImpl) RegistAsset(name string, content []byte) {
+func (ga *AssetsImpl) RegistAsset(
+	name string, content []byte, modtime time.Time,
+) {
 	ga.zipped[name] = content
+	ga.modtime[name] = modtime
 }

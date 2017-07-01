@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"io"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -29,7 +30,7 @@ func genGrandet(t *testing.T) *AssetsImpl {
 	ga := new(AssetsImpl)
 	ga.Init()
 
-	ga.RegistAsset("test.txt", zipped_content)
+	ga.RegistAsset("test.txt", zipped_content, time.Now())
 
 	return ga
 }

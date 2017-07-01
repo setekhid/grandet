@@ -3,7 +3,9 @@
 
 package {{.AssetPackage}}
 
-import ()
+import (
+	"time"
+)
 
 func (ga *grandetsAssets) {{.AssetRegister}}() {
 
@@ -16,5 +18,7 @@ func (ga *grandetsAssets) {{.AssetRegister}}() {
 			// asset content
 			{{.AssetContent}}
 		},
+
+		time.Unix({{.AssetModTime}}, 0),
 	)
 }
