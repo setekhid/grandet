@@ -26,7 +26,7 @@ func TestBytesAsset(t *testing.T) {
 	t.Log("hash:", asset.UniqueName())
 }
 
-func TestAssetsResult(t *testing.T) {
+func TestBarnResult(t *testing.T) {
 
 	grandet_raw, err := ioutil.ReadFile("grandet.go.tmpl")
 	require.NoError(t, err)
@@ -42,7 +42,7 @@ func TestAssetsResult(t *testing.T) {
 	assert.EqualValues(t, asset_raw, asset_asset)
 }
 
-func TestBarnResult(t *testing.T) {
+func TestAssetsResult(t *testing.T) {
 
 	grandet_raw, err := ioutil.ReadFile("grandet.go.tmpl")
 	require.NoError(t, err)

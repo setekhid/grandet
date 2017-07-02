@@ -5,12 +5,13 @@ import (
 	"compress/gzip"
 	"io"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func genGrandet(t *testing.T) *AssetsImpl {
+func genGrandet(t *testing.T, pkg_import string) *AssetsImpl {
 
 	raw_content := []byte("I'm an asset!")
 
@@ -27,16 +28,16 @@ func genGrandet(t *testing.T) *AssetsImpl {
 	zipped_content := writer.Bytes()
 
 	ga := new(AssetsImpl)
-	ga.Init()
+	ga.Init(pkg_import)
 
-	ga.RegistAsset("test.txt", zipped_content)
+	ga.RegistAsset("test.txt", zipped_content, time.Now())
 
 	return ga
 }
 
 func TestGrandetAsset(t *testing.T) {
 
-	ga := genGrandet(t)
+	ga := genGrandet(t, "github.com/setekhid/grandet00")
 
 	asset_content := ga.Asset("test.txt")
 
@@ -45,7 +46,7 @@ func TestGrandetAsset(t *testing.T) {
 
 func TestGrandetFoldl(t *testing.T) {
 
-	ga := genGrandet(t)
+	ga := genGrandet(t, "github.com/setekhid/grandet01")
 
 	result := ga.Foldl(
 
@@ -63,6 +64,31 @@ func TestGrandetFoldl(t *testing.T) {
 			}
 
 			return require
+		},
+	)
+
+	assert.EqualValues(t, true, result)
+}
+
+func TestGrandetFoldlNames(t *testing.T) {
+
+	ga := genGrandet(t, "github.com/setekhid/grandet03")
+
+	result := ga.FoldlNames(
+
+		false,
+
+		func(value interface{}, name string) interface{} {
+
+			if found := value.(bool); found {
+				return found
+			}
+
+			if "/test.txt" == name {
+				return true
+			}
+
+			return value
 		},
 	)
 
