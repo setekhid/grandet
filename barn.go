@@ -130,7 +130,7 @@ func (b *barnImpl) Branches(pkg_import string) []string {
 }
 
 var (
-	barn *barnImpl = newBarnImpl() // singleton instance
+	barn = newBarnImpl() // singleton instance
 
 	// Asset return an asset from the Barn instance
 	Asset = barn.Asset

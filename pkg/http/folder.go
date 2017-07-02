@@ -16,7 +16,9 @@ type barnFolder struct {
 	files    []string
 }
 
-func newBarnFolder(name string, branches, files []string, modtime time.Time) *barnFolder {
+func newBarnFolder(
+	name string, branches, files []string, modtime time.Time) *barnFolder {
+
 	return &barnFolder{
 		info: &barnFolderInfo{
 			name:    name,

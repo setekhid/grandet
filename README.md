@@ -22,20 +22,23 @@ package assets
 
 func init() {
 	// regist all local assets
-	assets := &grandetAssets{}
-	assets.registAssets()
-	assets.BelongTo("github.com/setekhid/grandet")
+	(&grandetAssets{}).registAssets()
 }
 ```
 
 ```golang
 package main
 
-import "github.com/setekhid/grandet/assets"
+import (
+	"github.com/setekhid/grandet/assets"
+	"githbu.com/setekhid/grandet/pkg/http"
+)
 
 func main() {
 	content := assets.Grandet.Asset("asset.go.tmpl")
 	_ = content
+	file := http.FS.Open("/github.com/setekhid/grandet/assets/asset.go.tmpl")
+	_ = file
 }
 ```
 
