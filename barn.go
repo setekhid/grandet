@@ -9,6 +9,7 @@ import (
 // Barn collects all imported Grandet assets
 type Barn interface {
 	Assets
+	Grandet(pkg_import string) Assets
 	Branches(pkg_import string) []string
 }
 
@@ -67,15 +68,50 @@ func (b *barnImpl) Foldl(
 	return result
 }
 
+// Assets#FoldlNames
+func (b *barnImpl) FoldlNames(
+
+	value interface{},
+	process func(interface{}, string) interface{},
+
+) interface{} {
+
+	result := value
+
+	for pkg_import, pkg_grandet := range b.grandets {
+
+		result = pkg_grandet.FoldlNames(
+			result,
+			func(value interface{}, name string) interface{} {
+				return process(value, path.Join(pkg_import, name))
+			},
+		)
+	}
+
+	return result
+}
+
+// Barn#Grandet
+func (b *barnImpl) Grandet(pkg_import string) Assets {
+
+	pkg_import = pathFormatAndCheck(pkg_import)
+
+	return b.grandets[pkg_import]
+}
+
 // Barn#Branches
 func (b *barnImpl) Branches(pkg_import string) []string {
 
 	pkg_import = pathFormatAndCheck(pkg_import)
 
 	branches := b.branches[pkg_import]
-	copied := make([]string, len(branches))
-	copy(copied, branches)
-	return copied
+	if false {
+		copied := make([]string, len(branches))
+		copy(copied, branches)
+		return copied
+	}
+
+	return branches
 }
 
 var (
@@ -85,6 +121,10 @@ var (
 	Asset = barn.Asset
 	// Foldl loop all assets in Barn
 	Foldl = barn.Foldl
+	// FoldlNames loop all asset names in Barn
+	FoldlNames = barn.FoldlNames
+	// Grandet return the Grandet object of the asset package
+	Grandet = barn.Grandet
 	// Branches return the branch names of specific path
 	Branches = barn.Branches
 )

@@ -34,6 +34,26 @@ func TestBarn(t *testing.T) {
 
 	assert.EqualValues(t, true, result)
 
+	result = FoldlNames(
+
+		false,
+
+		func(value interface{}, name string) interface{} {
+
+			if found := value.(bool); found {
+				return found
+			}
+
+			if "/github.com/setekhid/grandet02/test.txt" == name {
+				return true
+			}
+
+			return value
+		},
+	)
+
+	assert.EqualValues(t, true, result)
+
 	assert.EqualValues(t, Branches("github.com"), []string{"/setekhid"})
 	t.Log(Branches("github.com/setekhid"))
 	assert.Contains(t, Branches("github.com/setekhid"), "/grandet02")

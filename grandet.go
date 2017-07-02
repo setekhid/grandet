@@ -21,6 +21,12 @@ type Assets interface {
 			value interface{}, name string, content []byte,
 		) (result interface{}),
 	) (result interface{})
+
+	// FoldlNames fold all asset names in this Assets
+	FoldlNames(
+		value interface{},
+		process func(value interface{}, name string) (result interface{}),
+	) (result interface{})
 }
 
 // AssetsImpl provide the implementation of Assets
@@ -97,6 +103,28 @@ func (ga *AssetsImpl) Foldl(
 	// range zipped
 	for name, zipped := range ga.zipped {
 		result = process(result, name, ga.unzipped(zipped))
+	}
+
+	return result
+}
+
+// FoldlNames implement Assets#FoldlNames
+func (ga *AssetsImpl) FoldlNames(
+
+	value interface{},
+	process func(interface{}, string) interface{},
+
+) interface{} {
+
+	result := value
+
+	// range raw
+	for name := range ga.raw {
+		result = process(result, name)
+	}
+	// range zipped
+	for name := range ga.zipped {
+		result = process(result, name)
 	}
 
 	return result

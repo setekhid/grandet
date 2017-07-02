@@ -69,3 +69,28 @@ func TestGrandetFoldl(t *testing.T) {
 
 	assert.EqualValues(t, true, result)
 }
+
+func TestGrandetFoldlNames(t *testing.T) {
+
+	ga := genGrandet(t, "github.com/setekhid/grandet03")
+
+	result := ga.FoldlNames(
+
+		false,
+
+		func(value interface{}, name string) interface{} {
+
+			if found := value.(bool); found {
+				return found
+			}
+
+			if "/test.txt" == name {
+				return true
+			}
+
+			return value
+		},
+	)
+
+	assert.EqualValues(t, true, result)
+}
