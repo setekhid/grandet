@@ -2,7 +2,7 @@ package http
 
 import (
 	"bytes"
-	"io"
+	"errors"
 	"os"
 	"time"
 )
@@ -12,13 +12,13 @@ type barnFile struct {
 	info   *barnFileInfo
 }
 
-func newBarnFile(name string, content []byte) *barnFile {
+func newBarnFile(name string, content []byte, modtime time.Time) *barnFile {
 	return &barnFile{
 		reader: bytes.NewReader(content),
 		info: &barnFileInfo{
-			name: name,
-			size: int64(len(content)),
-			// FIXME assign time
+			name:    name,
+			size:    int64(len(content)),
+			modtime: modtime,
 		},
 	}
 }
@@ -26,7 +26,7 @@ func newBarnFile(name string, content []byte) *barnFile {
 func (bf *barnFile) Close() error { return nil }
 
 func (bf *barnFile) Readdir(count int) ([]os.FileInfo, error) {
-	return nil, io.EOF
+	return nil, errors.New(bf.info.name + " is not a directory")
 }
 
 func (bf *barnFile) Stat() (os.FileInfo, error) {
@@ -42,14 +42,14 @@ func (bf *barnFile) Read(b []byte) (int, error) {
 }
 
 type barnFileInfo struct {
-	name string
-	size int64
-	time time.Time
+	name    string
+	size    int64
+	modtime time.Time
 }
 
 func (info *barnFileInfo) Name() string       { return info.name }
 func (info *barnFileInfo) Size() int64        { return info.size }
 func (info *barnFileInfo) Mode() os.FileMode  { return os.ModePerm }
-func (info *barnFileInfo) ModTime() time.Time { return info.time }
+func (info *barnFileInfo) ModTime() time.Time { return info.modtime }
 func (info *barnFileInfo) IsDir() bool        { return false }
 func (info *barnFileInfo) Sys() interface{}   { return nil }

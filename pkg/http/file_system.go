@@ -2,13 +2,12 @@ package http
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/setekhid/grandet"
 )
 
-// BarnFS return the instance of http#FileSystem
-func BarnFS() http.FileSystem { return barnFileSystem{} }
+// FS presents the instance of http#FileSystem
+var FS http.FileSystem = barnFileSystem{}
 
 type barnFileSystem struct{}
 
@@ -16,9 +15,18 @@ type barnFileSystem struct{}
 func (fs barnFileSystem) Open(name string) (http.File, error) {
 
 	content := grandet.Asset(name)
-	if content == nil {
-		return nil, os.ErrNotExist
+	if content != nil {
+		modtime := grandet.ModTime(name)
+		return newBarnFile(name, content, modtime), nil
 	}
 
-	return newBarnFile(name, content), nil
+	branches := grandet.Branches(name)
+	files := grandet.Grandet(name).FoldlNames(
+		[]string{},
+		func(value interface{}, name string) interface{} {
+			return append(value.([]string), name)
+		},
+	).([]string)
+
+	return newBarnFolder(name, branches, files, grandet.ModBeginningTime), nil
 }
