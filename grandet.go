@@ -14,6 +14,9 @@ type Assets interface {
 	// Asset get an asset by name, if doesn't exists, return nil
 	Asset(name string) (content []byte)
 
+	// ModTime return the last modified time of asset
+	ModTime(name string) time.Time
+
 	// Foldl fold all assets in this Assets with value
 	Foldl(
 		value interface{},
@@ -84,6 +87,15 @@ func (ga *AssetsImpl) Asset(name string) []byte {
 	}
 
 	return nil
+}
+
+// ModBeginningTime is the very beginning of computer time
+var ModBeginningTime = time.Unix(0, 0)
+
+// ModTime implement Assets#ModTime
+func (ga *AssetsImpl) ModTime(name string) time.Time {
+	name = pathFormatAndCheck(name)
+	return ga.modtime[name]
 }
 
 // Foldl implement Assets#Foldl

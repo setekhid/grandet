@@ -4,6 +4,7 @@ import (
 	"path"
 	"sort"
 	"strings"
+	"time"
 )
 
 // Barn collects all imported Grandet assets
@@ -37,6 +38,20 @@ func (b *barnImpl) Asset(name string) []byte {
 	}
 
 	return nil
+}
+
+// Assets#ModTime
+func (b *barnImpl) ModTime(name string) time.Time {
+
+	name = pathFormatAndCheck(name)
+	pkg_import := path.Dir(name)
+	asset_name := path.Base(name)
+
+	if ga, ok := b.grandets[pkg_import]; ok {
+		return ga.ModTime(asset_name)
+	}
+
+	return ModBeginningTime
 }
 
 // Assets#Foldl
@@ -119,6 +134,8 @@ var (
 
 	// Asset return an asset from the Barn instance
 	Asset = barn.Asset
+	// ModTime return the modified time of an asset
+	ModTime = barn.ModTime
 	// Foldl loop all assets in Barn
 	Foldl = barn.Foldl
 	// FoldlNames loop all asset names in Barn
