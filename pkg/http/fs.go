@@ -7,7 +7,7 @@ import (
 )
 
 // FS presents the instance of http#FileSystem
-var FS http.FileSystem = barnFileSystem{}
+var Fs http.FileSystem = barnFileSystem{}
 
 type barnFileSystem struct{}
 

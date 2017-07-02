@@ -14,7 +14,7 @@ import (
 
 func TestFileSystem(t *testing.T) {
 
-	file, err := FS.Open("github.com/setekhid/grandet/assets/grandet.go.tmpl")
+	file, err := Fs.Open("github.com/setekhid/grandet/assets/grandet.go.tmpl")
 	assert.NoError(t, err)
 	defer file.Close()
 
@@ -34,7 +34,7 @@ func TestFileSystem(t *testing.T) {
 
 func TestHTTPFS(t *testing.T) {
 
-	handler := http.FileServer(FS)
+	handler := http.FileServer(Fs)
 
 	req := httptest.NewRequest(
 		http.MethodGet,
