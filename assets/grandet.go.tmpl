@@ -16,7 +16,7 @@ type grandetsAssets struct {
 
 func (ga *grandetsAssets) registAssets() {
 
-	ga.AssetsImpl.Init("{{.PackageImport}}")
+	ga.Init("{{.PackageImport}}")
 
 	// call asset registers
 {{range $_, $AssetRegister := .AssetRegisters}}
