@@ -6,7 +6,7 @@ import (
 	"github.com/setekhid/grandet"
 )
 
-// FS presents the instance of http#FileSystem
+// Fs presents the instance of http#FileSystem
 var Fs http.FileSystem = barnFileSystem{}
 
 type barnFileSystem struct{}

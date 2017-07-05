@@ -37,7 +37,7 @@ import (
 func main() {
 	content := assets.Grandet.Asset("asset.go.tmpl")
 	_ = content
-	file := http.FS.Open("/github.com/setekhid/grandet/assets/asset.go.tmpl")
+	file := http.Fs.Open("/github.com/setekhid/grandet/assets/asset.go.tmpl")
 	_ = file
 }
 ```
